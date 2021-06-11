@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrum Clock</title>
+</head>
+
+<body>
+    <div id="timer">
+        <label for="appt">Choose an ending time.</label>
+        <input type="time" id="timerTime" name="timerTime" required />
+        <button onClick="startTimer()"> Start timer. </button>
+    </div>
+    <div id="countdown" style="display: none;">
+        <h1> Countdown Clock</h1>
+        <div>
+            <span class="hours"></span>
+            <div class="smallText">Hours</div>
+        </div>
+        <div>
+            <span class="minutes"></span>
+            <div class="smallText">Minutes</div>
+        </div>
+        <div>
+            <span class="seconds"></span>
+            <div class="smallText">Seconds</div>
+        </div>
+    </div>
+    <div id="countdownEnd" style="display: none;">
+        <img src="https://i0.wp.com/emoji.gg/assets/emoji/7773_tunez_rainbow.gif" alt="kirby with headphones"/>
+        <button onClick="backToSelector()">Go back</button>
+    </div>
+</body>
+
+<style>
+    #countdown {
+        font-family: sans-serif;
+        color: #A6D3A0;
+        display: inline-block;
+        font-weight: 100;
+        text-align: center;
+        font-size: 30px;
+    }
+
+    #countdown > div {
+        padding: 10px;
+        border-radius: 3px;
+        background: #A6D3A0;
+        display: inline-block;
+    }
+
+    #countdown > div > span {
+        padding: 15px;
+        border-radius: 3px;
+        background: #B3FFB3;
+        display: inline-block;
+    }
+
+    .smallText {
+        padding-top: 5px;
+        font-size: 16px;
+        color: #656565;
+    }
+</style>
+
+<script>
+    function startTimer() {
+        showTimerSelection(false)
+        showCountdownView(true)
+
+        const countdown = document.getElementById("countdown")
+
+        const hoursSpan = countdown.querySelector('.hours')
+        const minutesSpan = countdown.querySelector('.minutes')
+        const secondsSpan = countdown.querySelector('.seconds')
+
+        var endTime = getDate(document.getElementById('timerTime').value)
+        console.log(endTime)
+
+        function updateCountdown() {
+            const t = getTimeRemaining(endTime)
+            hoursSpan.innerHTML = ('0' + t.hours).slice(-2)
+            minutesSpan.innerHTML = ('0' + t.minutes).slice(-2)
+            secondsSpan.innerHTML = ('0' + t.seconds).slice(-2)
+
+            if(t.total <= 0) {
+                clearInterval(timeInterval)
+                showCountdownView(false)
+                showCountdownEndView(true)
+            }
+        }
+
+        updateCountdown()
+        const timeInterval = setInterval(updateCountdown, 1000)
+    }
+
+    function showTimerSelection(shouldShow) {
+        document.getElementById("timer").style.display = shouldShow ? "block" : "none"
+    }
+
+    function showCountdownView(shouldShow) {
+        document.getElementById("countdown").style.display = shouldShow ? "block" : "none"
+    }
+
+    function showCountdownEndView(shouldShow) {
+        document.getElementById("countdownEnd").style.display = shouldShow ? "block" : "none"
+    }
+
+    function backToSelector() {
+        showTimerSelection(true)
+        showCountdownEndView(false)
+    }
+
+    function getDate(fromTime) {
+        var pieces = fromTime.split(':')
+        var today = new Date()
+        today.setHours(pieces[0],pieces[1])
+        console.log()
+        return today
+    }
+
+    function getTimeRemaining(endtime) {
+        const total = Date.parse(endtime) - Date.parse(new Date());
+        const seconds = Math.floor((total / 1000) % 60);
+        const minutes = Math.floor((total / 1000 / 60) % 60);
+        const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+        const days = Math.floor(total / (1000 * 60 * 60 * 24));
+
+        return {
+            total,
+            days,
+            hours,
+            minutes,
+            seconds
+        }
+    }
+</script>
+
+</html>
